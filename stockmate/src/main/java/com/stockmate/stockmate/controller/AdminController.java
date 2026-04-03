@@ -25,68 +25,59 @@ import lombok.extern.slf4j.Slf4j;
  *
  * ══════════════════════════════════════════════════════════════════════════
  * RESPONSIBILITY BOUNDARY (CLAUDE.md)
- * ══════════════════════════════════════════════════════════════════════════
- *   ✅ Maps /admin/** URLs → service calls
- *   ✅ Aggregates data from UserService + OrderService for the dashboard
- *   ❌ No business logic — role assignment, disable/delete logic → service
- *   ❌ Never touches a repository directly
- *   ❌ Never returns a JPA entity
+ * ══════════════════════════════════════════════════════════════════════════ ✅
+ * Maps /admin/** URLs → service calls ✅ Aggregates data from UserService +
+ * OrderService for the dashboard ❌ No business logic — role assignment,
+ * disable/delete logic → service ❌ Never touches a repository directly ❌ Never
+ * returns a JPA entity
  *
- * ACCESS CONTROL (two-layer)
- * ──────────────────────────
- *   Layer 1 (SecurityConfig):
- *     /admin/**  → hasRole('ADMIN')   — blanket URL guard
- *   Layer 2 (@PreAuthorize in UserServiceImpl):
- *     getAllUsers / changeRole / disableUser / deleteUser → hasRole('ADMIN')
- *   Double enforcement ensures a misconfigured URL rule cannot bypass service logic.
+ * ACCESS CONTROL (two-layer) ────────────────────────── Layer 1
+ * (SecurityConfig): /admin/** → hasRole('ADMIN') — blanket URL guard Layer 2
+ * (@PreAuthorize in UserServiceImpl): getAllUsers / changeRole / disableUser /
+ * deleteUser → hasRole('ADMIN') Double enforcement ensures a misconfigured URL
+ * rule cannot bypass service logic.
  *
- * ENDPOINT SUMMARY  (FR-ADM-01 / FR-ADM-02 / FR-ADM-03)
- * ──────────────────────────────────────────────────────
- *   GET    /admin              → admin dashboard (user + order counts)
- *   GET    /admin/users        → list all users
- *   PUT    /admin/users/{id}/role    → change user role (ADMIN)
- *   PUT    /admin/users/{id}/disable → disable user account (ADMIN)
- *   DELETE /admin/users/{id}         → hard delete user (ADMIN)
+ * ENDPOINT SUMMARY (FR-ADM-01 / FR-ADM-02 / FR-ADM-03)
+ * ────────────────────────────────────────────────────── GET /admin → admin
+ * dashboard (user + order counts) GET /admin/users → list all users PUT
+ * /admin/users/{id}/role → change user role (ADMIN) PUT
+ * /admin/users/{id}/disable → disable user account (ADMIN) DELETE
+ * /admin/users/{id} → hard delete user (ADMIN)
  *
- * HTML FORM NOTE:
- *   PUT and DELETE use Spring's HiddenHttpMethodFilter.
- *   Requires: spring.mvc.hiddenmethod.filter.enabled=true
+ * HTML FORM NOTE: PUT and DELETE use Spring's HiddenHttpMethodFilter. Requires:
+ * spring.mvc.hiddenmethod.filter.enabled=true
  */
 @Slf4j
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final UserService  userService;
+    private final UserService userService;
     private final OrderService orderService;
 
     // ── Constructor injection ─────────────────────────────────
-
     public AdminController(UserService userService, OrderService orderService) {
-        this.userService  = userService;
+        this.userService = userService;
         this.orderService = orderService;
     }
 
     // ══════════════════════════════════════════════════════════
     //  GET /admin — admin dashboard
     // ══════════════════════════════════════════════════════════
-
     /**
      * Admin landing page with summary statistics.
      *
-     * Aggregates:
-     *   - Total registered users count
-     *   - Total orders count
-     *   - Full orders list (for the orders table on the dashboard)
+     * Aggregates: - Total registered users count - Total orders count - Full
+     * orders list (for the orders table on the dashboard)
      *
      * Each service call is independent — no business logic mixed in.
      */
     @GetMapping
     public String dashboard(Model model) {
-        List<UserResponse>  users  = userService.getAllUsers();
+        List<UserResponse> users = userService.getAllUsers();
         List<OrderResponse> orders = orderService.getAllOrders();
 
-        model.addAttribute("totalUsers",  users.size());
+        model.addAttribute("totalUsers", users.size());
         model.addAttribute("totalOrders", orders.size());
         model.addAttribute("recentOrders", orders.stream().limit(10).toList());
         // Recent 10 orders for the dashboard summary table
@@ -98,10 +89,9 @@ public class AdminController {
     //  GET /admin/users — list all registered users
     //  FR-ADM-01
     // ══════════════════════════════════════════════════════════
-
     /**
-     * Shows the full user list for admin management.
-     * Business rule (ADMIN only) is enforced by @PreAuthorize in UserServiceImpl.
+     * Shows the full user list for admin management. Business rule (ADMIN only)
+     * is enforced by @PreAuthorize in UserServiceImpl.
      */
     @GetMapping("/users")
     public String listUsers(Model model) {
@@ -117,14 +107,14 @@ public class AdminController {
     //
     //  HTML workaround: <input type="hidden" name="_method" value="put"/>
     // ══════════════════════════════════════════════════════════
-
     /**
      * Changes the role of a user account.
      *
      * Accepted values for newRole: "ROLE_BUYER", "ROLE_SELLER", "ROLE_ADMIN".
      * UserService.changeRole() validates the role exists via RoleService.
      *
-     * ResourceNotFoundException (unknown userId) → GlobalExceptionHandler → 404.
+     * ResourceNotFoundException (unknown userId) → GlobalExceptionHandler →
+     * 404.
      */
     @PutMapping("/users/{id}/role")
     public String changeUserRole(
@@ -150,15 +140,14 @@ public class AdminController {
     //  Soft-disable is preferred over hard-delete in most cases because
     //  it preserves the user's orders and product history (FK integrity).
     // ══════════════════════════════════════════════════════════
-
     /**
-     * Disables a user account (enabled = false).
-     * The user can no longer log in.
-     * Their orders and products remain in the DB — referential integrity preserved.
+     * Disables a user account (enabled = false). The user can no longer log in.
+     * Their orders and products remain in the DB — referential integrity
+     * preserved.
      */
     @PutMapping("/users/{id}/disable")
     public String disableUser(@PathVariable Long id,
-                              RedirectAttributes redirectAttrs) {
+            RedirectAttributes redirectAttrs) {
 
         userService.disableUser(id);
 
@@ -179,18 +168,17 @@ public class AdminController {
     //  has associated orders or products. Soft-disable (/disable) is safer.
     //  Catch the DataIntegrityViolationException from Spring and show a message.
     // ══════════════════════════════════════════════════════════
-
     /**
      * Hard-deletes a user account.
      *
-     * DataIntegrityViolationException (user has orders/products)
-     *   is caught here with a friendly flash error — the record cannot be
-     *   deleted until its dependents are removed first.
-     *   In that case the admin should use /disable instead.
+     * DataIntegrityViolationException (user has orders/products) is caught here
+     * with a friendly flash error — the record cannot be deleted until its
+     * dependents are removed first. In that case the admin should use /disable
+     * instead.
      */
     @DeleteMapping("/users/{id}")
     public String deleteUser(@PathVariable Long id,
-                             RedirectAttributes redirectAttrs) {
+            RedirectAttributes redirectAttrs) {
 
         try {
             userService.deleteUser(id);
@@ -202,8 +190,8 @@ public class AdminController {
             // User has linked orders or products — FK constraint prevents deletion
             log.warn("Cannot delete userId={} — FK constraint: {}", id, ex.getMessage());
             redirectAttrs.addFlashAttribute("errorMessage",
-                    "Cannot delete this user — they have existing orders or products. " +
-                            "Use 'Disable' instead to deactivate the account.");
+                    "Cannot delete this user — they have existing orders or products. "
+                    + "Use 'Disable' instead to deactivate the account.");
         }
 
         return "redirect:/admin/users";

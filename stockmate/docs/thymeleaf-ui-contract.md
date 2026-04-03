@@ -4,36 +4,39 @@ This document describes the model attributes and DTO form bindings used by the T
 
 ## 1) Page to Model/DTO Mapping
 
-| Page | Template | Required Model Attributes | Form DTO Binding |
-|---|---|---|---|
-| `/auth/login` | `auth/login` | `loginRequest`, optional `errorMessage`, `logoutMessage` | `LoginRequest(username, password)` |
-| `/auth/register` | `auth/register` | `registerRequest`, optional `errorMessage` | `RegisterRequest(username, email, password, role)` |
-| `/products` | `products/catalogue` | `products`, `categories`, `currentPage`, `totalPages`, `totalItems`, `keyword`, `selectedCat`, `sort` | none (GET filter form only) |
-| `/products/{id}` | `products/detail` | `product`, `placeOrderRequest`, optional `successMessage`, `errorMessage` | `PlaceOrderRequest(productId, quantity)` |
-| `/products/new` | `products/form` | `productRequest`, `categories`, `formAction=create` | `CreateProductRequest(name, description, price, stockQuantity, categoryId)` |
-| `/products/{id}/edit` | `products/form` | `product`, `productRequest`, `categories`, `formAction=edit` | `UpdateProductRequest(name, description, price, stockQuantity, status, categoryId)` |
-| `/orders/my` | `orders/buyer-orders` | `orders` | Cancel action form (no DTO body) |
-| `/orders/seller` | `orders/seller-orders` | `orders`, `updateStatusRequest` | `UpdateOrderStatusRequest(newStatus)` |
-| `/admin` | `admin/dashboard` | `totalUsers`, `totalOrders`, `recentOrders` | none |
-| `/admin/users` | `admin/users` | `users`, `roleChangeRequest` | `ChangeRoleRequest(newRole)` for role form |
-| `/categories` | `admin/categories` | `categories`, `categoryRequest` | `CreateCategoryRequest(name, description)` |
-| `/dashboard/seller` | `dashboard/seller` | `totalProducts`, `pendingOrders`, `products`, `recentOrders` | none |
-| `/dashboard/buyer` | `dashboard/buyer` | `totalOrders`, `activeOrders`, `recentOrders` | none |
-| 403 error | `error/403` | optional `errorTitle`, `errorMessage` | none |
+| Page                  | Template               | Required Model Attributes                                                                             | Form DTO Binding                                                                    |
+| --------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `/auth/login`         | `auth/login`           | `loginRequest`, optional `errorMessage`, `logoutMessage`                                              | `LoginRequest(username, password)`                                                  |
+| `/auth/register`      | `auth/register`        | `registerRequest`, optional `errorMessage`                                                            | `RegisterRequest(username, email, password, role)`                                  |
+| `/products`           | `products/catalogue`   | `products`, `categories`, `currentPage`, `totalPages`, `totalItems`, `keyword`, `selectedCat`, `sort` | none (GET filter form only)                                                         |
+| `/products/{id}`      | `products/detail`      | `product`, `placeOrderRequest`, optional `successMessage`, `errorMessage`                             | `PlaceOrderRequest(productId, quantity)`                                            |
+| `/products/new`       | `products/form`        | `productRequest`, `categories`, `formAction=create`                                                   | `CreateProductRequest(name, description, price, stockQuantity, categoryId)`         |
+| `/products/{id}/edit` | `products/form`        | `product`, `productRequest`, `categories`, `formAction=edit`                                          | `UpdateProductRequest(name, description, price, stockQuantity, status, categoryId)` |
+| `/orders/my`          | `orders/buyer-orders`  | `orders`                                                                                              | Cancel action form (no DTO body)                                                    |
+| `/orders/seller`      | `orders/seller-orders` | `orders`, `updateStatusRequest`                                                                       | `UpdateOrderStatusRequest(newStatus)`                                               |
+| `/admin`              | `admin/dashboard`      | `totalUsers`, `totalOrders`, `recentOrders`                                                           | none                                                                                |
+| `/admin/users`        | `admin/users`          | `users`, `roleChangeRequest`                                                                          | `ChangeRoleRequest(newRole)` for role form                                          |
+| `/categories`         | `admin/categories`     | `categories`, `categoryRequest`                                                                       | `CreateCategoryRequest(name, description)`                                          |
+| `/dashboard/seller`   | `dashboard/seller`     | `totalProducts`, `pendingOrders`, `products`, `recentOrders`                                          | none                                                                                |
+| `/dashboard/buyer`    | `dashboard/buyer`      | `totalOrders`, `activeOrders`, `recentOrders`                                                         | none                                                                                |
+| 403 error             | `error/403`            | optional `errorTitle`, `errorMessage`                                                                 | none                                                                                |
 
 ## 2) DTO Fields Used in Forms
 
 ### LoginRequest
+
 - `username`
 - `password`
 
 ### RegisterRequest
+
 - `username`
 - `email`
 - `password`
 - `role` (`ROLE_BUYER` or `ROLE_SELLER`)
 
 ### CreateProductRequest
+
 - `name`
 - `description`
 - `price`
@@ -41,6 +44,7 @@ This document describes the model attributes and DTO form bindings used by the T
 - `categoryId`
 
 ### UpdateProductRequest
+
 - `name`
 - `description`
 - `price`
@@ -49,17 +53,21 @@ This document describes the model attributes and DTO form bindings used by the T
 - `categoryId`
 
 ### PlaceOrderRequest
+
 - `productId`
 - `quantity`
 
 ### UpdateOrderStatusRequest
+
 - `newStatus` (`CONFIRMED`, `SHIPPED`, `DELIVERED` in seller/admin views)
 
 ### CreateCategoryRequest
+
 - `name`
 - `description`
 
 ### ChangeRoleRequest
+
 - `newRole` (`ROLE_BUYER`, `ROLE_SELLER`, `ROLE_ADMIN`)
 
 ## 3) Example Controller Methods Per Requested Page
@@ -203,6 +211,7 @@ public String buyerDashboard(@AuthenticationPrincipal CustomUserDetails currentU
 ## 4) Fragment Usage Pattern
 
 All pages include:
+
 - `fragments/header :: siteHeader(...)`
 - `fragments/header :: flashMessages`
 - `fragments/footer :: siteFooter`

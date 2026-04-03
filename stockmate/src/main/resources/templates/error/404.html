@@ -1,29 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 | StockMate</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
-</head>
-<body>
-<div class="site-shell">
-    <div th:replace="~{fragments/header :: siteHeader('Not Found')}"></div>
+  </head>
+  <body>
+    <div class="site-shell">
+      <div th:replace="~{fragments/header :: siteHeader('Not Found')}"></div>
 
-    <main class="page">
+      <main class="page">
         <div class="container">
-            <section class="card auth-card">
-                <h2 class="page-title" th:text="${errorTitle != null ? errorTitle : 'Not Found'}">Not Found</h2>
-                <p class="page-subtitle" th:text="${errorMessage != null ? errorMessage : 'The requested resource does not exist.'}">The requested resource does not exist.</p>
+          <section class="card auth-card">
+            <h2
+              class="page-title"
+              th:text="${errorTitle != null ? errorTitle : 'Not Found'}"
+            >
+              Not Found
+            </h2>
+            <p
+              class="page-subtitle"
+              th:text="${errorMessage != null ? errorMessage : 'The requested resource does not exist.'}"
+            >
+              The requested resource does not exist.
+            </p>
 
-                <div class="btn-row" style="margin-top: 16px;">
-                    <a class="btn" th:href="@{/products}">Go to Catalogue</a>
-                </div>
-            </section>
+            <div class="btn-row" style="margin-top: 16px">
+              <a class="btn" th:href="@{/products}">Go to Catalogue</a>
+            </div>
+          </section>
         </div>
-    </main>
+      </main>
 
-    <div th:replace="~{fragments/footer :: siteFooter}"></div>
-</div>
-</body>
+      <div th:replace="~{fragments/footer :: siteFooter}"></div>
+    </div>
+  </body>
 </html>

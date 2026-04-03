@@ -35,9 +35,9 @@ import com.stockmate.stockmate.repository.UserRepository;
 /**
  * Unit tests for ProductServiceImpl.
  *
- * No Spring context is loaded — all dependencies are mocked with Mockito.
- * Tests focus on business logic correctness, ownership enforcement, and
- * stock-status computation which are core to the StockMate domain.
+ * No Spring context is loaded — all dependencies are mocked with Mockito. Tests
+ * focus on business logic correctness, ownership enforcement, and stock-status
+ * computation which are core to the StockMate domain.
  */
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -194,12 +194,12 @@ class ProductServiceTest {
     }
 
     private Product product(String name,
-                            String description,
-                            BigDecimal price,
-                            int stockQuantity,
-                            ProductStatus status,
-                            Category category,
-                            User seller) {
+            String description,
+            BigDecimal price,
+            int stockQuantity,
+            ProductStatus status,
+            Category category,
+            User seller) {
         Product product = new Product(name, description, price, stockQuantity, category, seller);
         product.setStatus(status);
         return product;

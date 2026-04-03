@@ -1,54 +1,140 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-<header class="site-header" th:fragment="siteHeader(pageTitle)">
-	<div class="container header-inner">
-		<div class="brand">
-			<h1 class="brand-title">StockMate</h1>
-			<p class="brand-subtitle" th:text="${pageTitle}">Dashboard</p>
-		</div>
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <body>
+    <header class="site-header" th:fragment="siteHeader(pageTitle)">
+      <div class="container header-inner">
+        <div class="brand">
+          <h1 class="brand-title">StockMate</h1>
+          <p class="brand-subtitle" th:text="${pageTitle}">Dashboard</p>
+        </div>
 
-		<nav class="main-nav" aria-label="Primary navigation">
-			<a class="nav-link" th:href="@{/products}" sec:authorize="isAuthenticated()">Catalogue</a>
-			<a class="nav-link" th:href="@{/categories}" sec:authorize="isAuthenticated()">Categories</a>
+        <nav class="main-nav" aria-label="Primary navigation">
+          <a
+            class="nav-link"
+            th:href="@{/products}"
+            sec:authorize="isAuthenticated()"
+            >Catalogue</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/categories}"
+            sec:authorize="isAuthenticated()"
+            >Categories</a
+          >
 
-			<a class="nav-link" th:href="@{/dashboard/buyer}" sec:authorize="hasRole('BUYER')">Buyer Dashboard</a>
-			<a class="nav-link" th:href="@{/orders/my}" sec:authorize="hasRole('BUYER')">My Orders</a>
+          <a
+            class="nav-link"
+            th:href="@{/dashboard/buyer}"
+            sec:authorize="hasRole('BUYER')"
+            >Buyer Dashboard</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/orders/my}"
+            sec:authorize="hasRole('BUYER')"
+            >My Orders</a
+          >
 
-			<a class="nav-link" th:href="@{/dashboard/seller}" sec:authorize="hasRole('SELLER')">Seller Dashboard</a>
-			<a class="nav-link" th:href="@{/products/new}" sec:authorize="hasRole('SELLER')">Add Product</a>
-			<a class="nav-link" th:href="@{/orders/seller}" sec:authorize="hasRole('SELLER')">Seller Orders</a>
+          <a
+            class="nav-link"
+            th:href="@{/dashboard/seller}"
+            sec:authorize="hasRole('SELLER')"
+            >Seller Dashboard</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/products/new}"
+            sec:authorize="hasRole('SELLER')"
+            >Add Product</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/orders/seller}"
+            sec:authorize="hasRole('SELLER')"
+            >Seller Orders</a
+          >
 
-			<a class="nav-link" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">Admin Dashboard</a>
-			<a class="nav-link" th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
-			<a class="nav-link" th:href="@{/orders}" sec:authorize="hasRole('ADMIN')">All Orders</a>
+          <a
+            class="nav-link"
+            th:href="@{/admin}"
+            sec:authorize="hasRole('ADMIN')"
+            >Admin Dashboard</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/admin/users}"
+            sec:authorize="hasRole('ADMIN')"
+            >Users</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/orders}"
+            sec:authorize="hasRole('ADMIN')"
+            >All Orders</a
+          >
 
-			<a class="nav-link" th:href="@{/auth/login}" sec:authorize="isAnonymous()">Login</a>
-			<a class="nav-link" th:href="@{/auth/register}" sec:authorize="isAnonymous()">Register</a>
-		</nav>
+          <a
+            class="nav-link"
+            th:href="@{/auth/login}"
+            sec:authorize="isAnonymous()"
+            >Login</a
+          >
+          <a
+            class="nav-link"
+            th:href="@{/auth/register}"
+            sec:authorize="isAnonymous()"
+            >Register</a
+          >
+        </nav>
 
-		<div class="user-block">
-			<span sec:authorize="isAuthenticated()">
-				Signed in as <strong sec:authentication="name">username</strong>
-			</span>
-			<form sec:authorize="isAuthenticated()" th:action="@{/auth/logout}" method="post">
-				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-				<button class="btn btn-ghost" type="submit">Logout</button>
-			</form>
-		</div>
-	</div>
-</header>
+        <div class="user-block">
+          <span sec:authorize="isAuthenticated()">
+            Signed in as <strong sec:authentication="name">username</strong>
+          </span>
+          <form
+            sec:authorize="isAuthenticated()"
+            th:action="@{/auth/logout}"
+            method="post"
+          >
+            <input
+              type="hidden"
+              th:name="${_csrf.parameterName}"
+              th:value="${_csrf.token}"
+            />
+            <button class="btn btn-ghost" type="submit">Logout</button>
+          </form>
+        </div>
+      </div>
+    </header>
 
-<div th:fragment="flashMessages" class="container">
-	<div class="alert alert-success" th:if="${successMessage}">
-		<span th:text="${successMessage}">Success message</span>
-		<button type="button" class="alert-close" data-alert-close aria-label="Close">x</button>
-	</div>
+    <div th:fragment="flashMessages" class="container">
+      <div class="alert alert-success" th:if="${successMessage}">
+        <span th:text="${successMessage}">Success message</span>
+        <button
+          type="button"
+          class="alert-close"
+          data-alert-close
+          aria-label="Close"
+        >
+          x
+        </button>
+      </div>
 
-	<div class="alert alert-error" th:if="${errorMessage}">
-		<span th:text="${errorMessage}">Error message</span>
-		<button type="button" class="alert-close" data-alert-close aria-label="Close">x</button>
-	</div>
-</div>
-</body>
+      <div class="alert alert-error" th:if="${errorMessage}">
+        <span th:text="${errorMessage}">Error message</span>
+        <button
+          type="button"
+          class="alert-close"
+          data-alert-close
+          aria-label="Close"
+        >
+          x
+        </button>
+      </div>
+    </div>
+  </body>
 </html>
