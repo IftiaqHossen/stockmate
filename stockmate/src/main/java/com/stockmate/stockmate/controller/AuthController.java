@@ -1,10 +1,5 @@
 package com.stockmate.stockmate.controller;
 
-import com.stockmate.stockmate.dto.request.RegisterRequest;
-import com.stockmate.stockmate.dto.response.UserResponse;
-import com.stockmate.stockmate.service.UserService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.stockmate.stockmate.dto.request.LoginRequest;
+import com.stockmate.stockmate.dto.request.RegisterRequest;
+import com.stockmate.stockmate.dto.response.UserResponse;
+import com.stockmate.stockmate.service.UserService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AuthController — handles user registration, login page display, and logout.
@@ -179,6 +182,10 @@ public class AuthController {
         if (logout != null) {
             model.addAttribute("logoutMessage",
                     "You have been logged out successfully.");
+        }
+
+        if (!model.containsAttribute("loginRequest")) {
+            model.addAttribute("loginRequest", new LoginRequest("", ""));
         }
 
         return "auth/login";   // → templates/auth/login.html

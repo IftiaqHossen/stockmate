@@ -85,7 +85,7 @@ public class Product {
 
     // ── Constructors ──────────────────────────────────────────
 
-    protected Product() {
+    public Product() {
         // JPA required
     }
 

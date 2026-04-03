@@ -1,14 +1,7 @@
 package com.stockmate.stockmate.controller;
 
-import com.stockmate.stockmate.dto.request.CreateProductRequest;
-import com.stockmate.stockmate.dto.request.UpdateProductRequest;
-import com.stockmate.stockmate.dto.response.CategoryResponse;
-import com.stockmate.stockmate.dto.response.ProductResponse;
-import com.stockmate.stockmate.security.CustomUserDetails;
-import com.stockmate.stockmate.service.CategoryService;
-import com.stockmate.stockmate.service.ProductService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +20,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import com.stockmate.stockmate.dto.request.CreateProductRequest;
+import com.stockmate.stockmate.dto.request.PlaceOrderRequest;
+import com.stockmate.stockmate.dto.request.UpdateProductRequest;
+import com.stockmate.stockmate.dto.response.CategoryResponse;
+import com.stockmate.stockmate.dto.response.ProductResponse;
+import com.stockmate.stockmate.security.CustomUserDetails;
+import com.stockmate.stockmate.service.CategoryService;
+import com.stockmate.stockmate.service.ProductService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ProductController — product catalogue, detail, and CRUD endpoints.
@@ -145,6 +148,9 @@ public class ProductController {
     public String productDetail(@PathVariable Long id, Model model) {
         ProductResponse product = productService.getProductById(id);
         model.addAttribute("product", product);
+                if (!model.containsAttribute("placeOrderRequest")) {
+                        model.addAttribute("placeOrderRequest", new PlaceOrderRequest(product.id(), 1));
+                }
         return "products/detail";   // → templates/products/detail.html
     }
 

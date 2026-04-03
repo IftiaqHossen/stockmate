@@ -1,12 +1,7 @@
 package com.stockmate.stockmate.controller;
 
-import com.stockmate.stockmate.dto.request.PlaceOrderRequest;
-import com.stockmate.stockmate.dto.request.UpdateOrderStatusRequest;
-import com.stockmate.stockmate.dto.response.OrderResponse;
-import com.stockmate.stockmate.security.CustomUserDetails;
-import com.stockmate.stockmate.service.OrderService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +14,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import com.stockmate.stockmate.dto.request.PlaceOrderRequest;
+import com.stockmate.stockmate.dto.request.UpdateOrderStatusRequest;
+import com.stockmate.stockmate.dto.response.OrderResponse;
+import com.stockmate.stockmate.security.CustomUserDetails;
+import com.stockmate.stockmate.service.OrderService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * OrderController — order lifecycle for BUYER, SELLER, and ADMIN.
@@ -193,6 +195,7 @@ public class OrderController {
                 orderService.getOrdersBySeller(currentUser.getUsername());
 
         model.addAttribute("orders", orders);
+        model.addAttribute("updateStatusRequest", new UpdateOrderStatusRequest(null));
         return "orders/seller-orders";   // → templates/orders/seller-orders.html
     }
 
@@ -209,6 +212,7 @@ public class OrderController {
     public String allOrders(Model model) {
         List<OrderResponse> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
+        model.addAttribute("updateStatusRequest", new UpdateOrderStatusRequest(null));
         return "orders/all-orders";   // → templates/orders/all-orders.html
     }
 

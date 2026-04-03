@@ -1,10 +1,7 @@
 package com.stockmate.stockmate.controller;
 
-import com.stockmate.stockmate.dto.response.OrderResponse;
-import com.stockmate.stockmate.dto.response.UserResponse;
-import com.stockmate.stockmate.service.OrderService;
-import com.stockmate.stockmate.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import com.stockmate.stockmate.dto.request.ChangeRoleRequest;
+import com.stockmate.stockmate.dto.response.OrderResponse;
+import com.stockmate.stockmate.dto.response.UserResponse;
+import com.stockmate.stockmate.service.OrderService;
+import com.stockmate.stockmate.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AdminController — admin-only operations: dashboard, user management.
@@ -104,6 +107,7 @@ public class AdminController {
     public String listUsers(Model model) {
         List<UserResponse> users = userService.getAllUsers();
         model.addAttribute("users", users);
+        model.addAttribute("roleChangeRequest", new ChangeRoleRequest("ROLE_BUYER"));
         return "admin/users";   // → templates/admin/users.html
     }
 

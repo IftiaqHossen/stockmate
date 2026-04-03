@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Product Catalogue | StockMate</title>
+	<link rel="stylesheet" th:href="@{/css/main.css}" />
+	<script defer th:src="@{/js/main.js}"></script>
+</head>
+<body>
+<div class="site-shell">
+	<div th:replace="~{fragments/header :: siteHeader('Product Catalogue')}"></div>
+
+	<main class="page">
+		<div th:replace="~{fragments/header :: flashMessages}"></div>
+
+		<div class="container">
+			<section class="card">
+				<div class="page-head">
+					<div>
+						<h2 class="page-title">Browse Products</h2>
+						<p class="page-subtitle">Search, filter, and sort the available listings.</p>
+					</div>
+					<a class="btn" th:href="@{/products/new}" sec:authorize="hasRole('SELLER')">Create Product</a>
+				</div>
+
+				<form th:action="@{/products}" method="get" class="filters">
+					<div class="field">
+						<label for="keyword">Keyword</label>
+						<input id="keyword" type="text" name="keyword" th:value="${keyword}" placeholder="Product name or description" />
+					</div>
+
+					<div class="field">
+						<label for="category">Category</label>
+						<select id="category" name="category">
+							<option value="">All Categories</option>
+							<option th:each="category : ${categories}"
+									th:value="${category.id}"
+									th:text="${category.name}"
+									th:selected="${selectedCat != null and selectedCat == category.id}">
+								Category
+							</option>
+						</select>
+					</div>
+
+					<div class="field">
+						<label for="sort">Sort</label>
+						<select id="sort" name="sort">
+							<option value="newest" th:selected="${sort == 'newest'}">Newest</option>
+							<option value="price_asc" th:selected="${sort == 'price_asc'}">Price: Low to High</option>
+							<option value="price_desc" th:selected="${sort == 'price_desc'}">Price: High to Low</option>
+						</select>
+					</div>
+
+					<div class="btn-row">
+						<button class="btn" type="submit">Apply</button>
+						<a class="btn btn-ghost" th:href="@{/products}">Reset</a>
+					</div>
+				</form>
+			</section>
+
+			<section class="card" th:if="${products != null and !#lists.isEmpty(products)}">
+				<p class="page-subtitle" th:text="'Total products: ' + ${totalItems}">Total products: 0</p>
+				<div class="product-grid">
+					<article class="card product-card" th:each="product : ${products}">
+						<h3 class="product-name" th:text="${product.name}">Product Name</h3>
+						<p th:text="${product.description}">Description</p>
+
+						<div class="product-meta">
+							<span th:text="'Category: ' + ${product.categoryName}">Category</span>
+							<span th:text="'Seller: ' + ${product.sellerUsername}">Seller</span>
+							<span th:text="'Stock: ' + ${product.stockQuantity}">Stock quantity</span>
+						</div>
+
+						<span class="badge" th:text="${product.stockStatus}">In Stock</span>
+						<p class="price" th:text="${product.price}">0.00</p>
+
+						<div class="btn-row">
+							<a class="btn btn-secondary" th:href="@{/products/{id}(id=${product.id})}">View Detail</a>
+						</div>
+					</article>
+				</div>
+
+				<div class="pagination" th:if="${totalPages > 0}">
+					<a th:if="${currentPage > 0}"
+					   th:href="@{/products(page=${currentPage - 1}, keyword=${keyword}, category=${selectedCat}, sort=${sort})}">
+						Previous
+					</a>
+
+					<th:block th:each="pageIndex : ${#numbers.sequence(0, totalPages - 1)}">
+						<span class="active" th:if="${pageIndex == currentPage}" th:text="${pageIndex + 1}">1</span>
+						<a th:if="${pageIndex != currentPage}"
+						   th:text="${pageIndex + 1}"
+						   th:href="@{/products(page=${pageIndex}, keyword=${keyword}, category=${selectedCat}, sort=${sort})}">
+							1
+						</a>
+					</th:block>
+
+					<a th:if="${currentPage + 1 < totalPages}"
+					   th:href="@{/products(page=${currentPage + 1}, keyword=${keyword}, category=${selectedCat}, sort=${sort})}">
+						Next
+					</a>
+				</div>
+			</section>
+
+			<section class="card" th:if="${products == null or #lists.isEmpty(products)}">
+				<p class="empty-state">No products found for the current filters.</p>
+			</section>
+		</div>
+	</main>
+
+	<div th:replace="~{fragments/footer :: siteFooter}"></div>
+</div>
+</body>
+</html>
