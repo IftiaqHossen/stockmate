@@ -1,4 +1,0 @@
-superuser: postgres
-password: 1233
-port: 5432
-LOCALE: default

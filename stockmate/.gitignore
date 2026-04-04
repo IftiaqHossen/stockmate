@@ -31,11 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-.env
-.env.example
-CLAUDE.md
-HELP.md
-settings.json
-
-
