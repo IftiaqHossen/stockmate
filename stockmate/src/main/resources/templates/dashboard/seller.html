@@ -1,5 +1,9 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,141 +12,231 @@
     <script defer th:src="@{/js/main.js}"></script>
   </head>
   <body>
-    <div class="site-shell">
-      <div
-        th:replace="~{fragments/header :: siteHeader('Seller Dashboard')}"
-      ></div>
+    <div class="app-layout">
 
-      <main class="page">
-        <div th:replace="~{fragments/header :: flashMessages}"></div>
+      <!-- Sidebar -->
+      <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
 
-        <div class="container grid">
-          <section class="card grid grid-2">
-            <div class="kpi">
-              <span class="kpi-label">Total Products</span>
-              <span class="kpi-value" th:text="${totalProducts}">0</span>
-            </div>
-            <div class="kpi">
-              <span class="kpi-label">Pending Orders</span>
-              <span class="kpi-value" th:text="${pendingOrders}">0</span>
-            </div>
-          </section>
+      <!-- Main area -->
+      <div class="app-main">
 
-          <section class="card">
-            <div class="btn-row">
-              <a class="btn" th:href="@{/products/new}">Create Product</a>
-              <a class="btn btn-secondary" th:href="@{/orders/seller}"
-                >Manage Orders</a
-              >
-              <a class="btn btn-ghost" th:href="@{/products}">Open Catalogue</a>
-            </div>
-          </section>
+        <!-- Topbar -->
+        <div th:replace="~{fragments/header :: topbar('Seller Dashboard')}"></div>
 
-          <section class="card">
-            <div class="page-head">
-              <div>
-                <h2 class="page-title">My Products</h2>
-                <p class="page-subtitle">Latest products from your store.</p>
+        <!-- Content -->
+        <main class="app-content">
+          <div th:replace="~{fragments/header :: flashMessagesInline}"></div>
+
+          <!-- Stat cards -->
+          <div class="stat-cards">
+
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-card-icon stat-card-icon--blue">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 2L2 7l8 5 8-5-8-5z"/>
+                    <path d="M2 13l8 5 8-5M2 10l8 5 8-5"/>
+                  </svg>
+                </div>
+                <span class="stat-card-trend">Active</span>
               </div>
+              <span class="stat-card-value" th:text="${totalProducts}">0</span>
+              <span class="stat-card-label">My Products</span>
+              <span class="stat-card-sub">Listed in the catalogue</span>
             </div>
 
-            <div
-              class="table-wrap"
-              th:if="${products != null and !#lists.isEmpty(products)}"
-            >
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="product : ${products}">
-                    <td th:text="${product.name}">Product</td>
-                    <td th:text="${product.categoryName}">Category</td>
-                    <td th:text="${product.price}">0.00</td>
-                    <td th:text="${product.stockQuantity}">0</td>
-                    <td>
-                      <span class="badge" th:text="${product.stockStatus}"
-                        >In Stock</span
-                      >
-                    </td>
-                    <td>
-                      <a
-                        class="btn btn-secondary"
-                        th:href="@{/products/{id}/edit(id=${product.id})}"
-                        >Edit</a
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-card-icon stat-card-icon--orange">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="10" r="8"/>
+                    <path d="M10 6v4l3 3"/>
+                  </svg>
+                </div>
+                <span class="stat-card-trend stat-card-trend--warn">Needs action</span>
+              </div>
+              <span class="stat-card-value" th:text="${pendingOrders}">0</span>
+              <span class="stat-card-label">Pending Orders</span>
+              <span class="stat-card-sub">Awaiting confirmation</span>
             </div>
 
-            <p
-              class="empty-state"
-              th:if="${products == null or #lists.isEmpty(products)}"
-            >
-              No products found. Add your first listing.
-            </p>
-          </section>
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-card-icon stat-card-icon--green">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 10l4 4 10-8"/>
+                  </svg>
+                </div>
+                <span class="stat-card-trend stat-card-trend--up">Orders</span>
+              </div>
+              <span class="stat-card-value">—</span>
+              <span class="stat-card-label">Fulfilled</span>
+              <span class="stat-card-sub">Delivered orders</span>
+            </div>
 
-          <section class="card">
-            <div class="page-head">
-              <div>
-                <h2 class="page-title">Recent Orders</h2>
-                <p class="page-subtitle">
-                  Most recent incoming orders for your products.
+            <div class="stat-card">
+              <div class="stat-card-header">
+                <div class="stat-card-icon stat-card-icon--purple">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 10h16M10 2v16"/>
+                    <circle cx="10" cy="10" r="8"/>
+                  </svg>
+                </div>
+                <span class="stat-card-trend">Earnings</span>
+              </div>
+              <span class="stat-card-value">—</span>
+              <span class="stat-card-label">Revenue</span>
+              <span class="stat-card-sub">Total from sales</span>
+            </div>
+
+          </div>
+
+          <!-- Two-column layout -->
+          <div class="dashboard-grid">
+
+            <!-- My Products -->
+            <section class="dash-section dash-section--wide">
+              <div class="section-header">
+                <h2 class="section-title">My Products</h2>
+                <a class="section-action" th:href="@{/products/new}">+ Add new &rarr;</a>
+              </div>
+
+              <div class="card">
+                <div
+                  class="table-wrap"
+                  th:if="${products != null and !#lists.isEmpty(products)}"
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="product : ${products}">
+                        <td th:text="${product.name}">Product</td>
+                        <td class="text-muted" th:text="${product.categoryName}">Category</td>
+                        <td class="text-mono" th:text="'$' + ${product.price}">$0.00</td>
+                        <td th:text="${product.stockQuantity}">0</td>
+                        <td>
+                          <span th:class="'badge ' +
+                            (${product.stockStatus == 'In Stock'}  ? 'badge-instock'   :
+                             ${product.stockStatus == 'Pre Order'} ? 'badge-preorder'  :
+                             'badge-outofstock')"
+                            th:text="${product.stockStatus}">In Stock</span>
+                        </td>
+                        <td>
+                          <a
+                            class="btn btn-secondary btn-sm"
+                            th:href="@{/products/{id}/edit(id=${product.id})}"
+                          >Edit</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p
+                  class="empty-state"
+                  th:if="${products == null or #lists.isEmpty(products)}"
+                >
+                  No products yet.
+                  <a th:href="@{/products/new}">Add your first listing &rarr;</a>
                 </p>
               </div>
-            </div>
+            </section>
 
-            <div
-              class="table-wrap"
-              th:if="${recentOrders != null and !#lists.isEmpty(recentOrders)}"
-            >
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Product</th>
-                    <th>Buyer</th>
-                    <th>Quantity</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="order : ${recentOrders}">
-                    <td th:text="${order.id}">1</td>
-                    <td th:text="${order.productName}">Product</td>
-                    <td th:text="${order.buyerUsername}">Buyer</td>
-                    <td th:text="${order.quantity}">1</td>
-                    <td>
-                      <span class="badge" th:text="${order.status}"
-                        >PENDING</span
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <!-- Right column: recent orders + quick actions -->
+            <section class="dash-section">
 
-            <p
-              class="empty-state"
-              th:if="${recentOrders == null or #lists.isEmpty(recentOrders)}"
-            >
-              No recent orders.
-            </p>
-          </section>
-        </div>
-      </main>
+              <!-- Recent Orders -->
+              <div class="section-header">
+                <h2 class="section-title">Recent Orders</h2>
+                <a class="section-action" th:href="@{/orders/seller}">View all &rarr;</a>
+              </div>
 
-      <div th:replace="~{fragments/footer :: siteFooter}"></div>
+              <div class="card" style="margin-bottom: 20px;">
+                <div
+                  class="table-wrap"
+                  th:if="${recentOrders != null and !#lists.isEmpty(recentOrders)}"
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Buyer</th>
+                        <th>Qty</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="order : ${recentOrders}">
+                        <td class="text-muted" th:text="${order.id}">1</td>
+                        <td th:text="${order.productName}">Product</td>
+                        <td th:text="${order.buyerUsername}">buyer</td>
+                        <td th:text="${order.quantity}">1</td>
+                        <td>
+                          <span th:class="'badge ' +
+                            (${order.status == 'PENDING'}   ? 'badge-pending'   :
+                             ${order.status == 'CONFIRMED'} ? 'badge-confirmed' :
+                             ${order.status == 'SHIPPED'}   ? 'badge-shipped'   :
+                             ${order.status == 'DELIVERED'} ? 'badge-delivered' :
+                             'badge-cancelled')"
+                            th:text="${order.status}">PENDING</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p
+                  class="empty-state"
+                  th:if="${recentOrders == null or #lists.isEmpty(recentOrders)}"
+                >
+                  No recent orders.
+                </p>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="section-header">
+                <h2 class="section-title">Quick Actions</h2>
+              </div>
+              <div class="quick-actions quick-actions--compact">
+                <a class="quick-action-card" th:href="@{/products/new}">
+                  <div class="quick-action-icon quick-action-icon--green">
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="10" cy="10" r="8"/>
+                      <path d="M10 7v6M7 10h6"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="quick-action-title">Add Product</div>
+                    <div class="quick-action-sub">Create a new listing</div>
+                  </div>
+                </a>
+                <a class="quick-action-card" th:href="@{/orders/seller}">
+                  <div class="quick-action-icon quick-action-icon--blue">
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+                      <path d="M8 6h4M8 10h4M8 14h2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="quick-action-title">Manage Orders</div>
+                    <div class="quick-action-sub">Update order statuses</div>
+                  </div>
+                </a>
+              </div>
+
+            </section>
+
+          </div>
+        </main>
+      </div>
     </div>
   </body>
 </html>

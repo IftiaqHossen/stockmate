@@ -1,0 +1,187 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <body>
+    <aside class="sidebar" th:fragment="sidebar(active)">
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <div class="sidebar-monogram">SM</div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">StockMate</span>
+          <span class="sidebar-brand-tagline">Inventory</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav" aria-label="Sidebar navigation">
+
+        <!-- Dashboard (role-adaptive) -->
+        <a
+          class="sidebar-link"
+          th:href="@{/admin}"
+          th:classappend="${active == 'dashboard'} ? ' is-active'"
+          sec:authorize="hasRole('ADMIN')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/>
+            <rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/>
+          </svg>
+          Dashboard
+        </a>
+
+        <a
+          class="sidebar-link"
+          th:href="@{/dashboard/seller}"
+          th:classappend="${active == 'dashboard'} ? ' is-active'"
+          sec:authorize="hasRole('SELLER')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/>
+            <rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/>
+          </svg>
+          Dashboard
+        </a>
+
+        <a
+          class="sidebar-link"
+          th:href="@{/dashboard/buyer}"
+          th:classappend="${active == 'dashboard'} ? ' is-active'"
+          sec:authorize="hasRole('BUYER')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/>
+            <rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/>
+          </svg>
+          Dashboard
+        </a>
+
+        <!-- Catalogue — all authenticated -->
+        <a
+          class="sidebar-link"
+          th:href="@{/products}"
+          th:classappend="${active == 'products'} ? ' is-active'"
+          sec:authorize="isAuthenticated()"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 4h14M3 8h14M3 12h10M3 16h7"/>
+            <rect x="12" y="11" width="6" height="6" rx="1"/>
+          </svg>
+          Catalogue
+        </a>
+
+        <!-- Categories — all authenticated (read) -->
+        <a
+          class="sidebar-link"
+          th:href="@{/categories}"
+          th:classappend="${active == 'categories'} ? ' is-active'"
+          sec:authorize="isAuthenticated()"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 5a1 1 0 011-1h3a1 1 0 010 2H4a1 1 0 01-1-1z"/>
+            <path d="M3 10a1 1 0 011-1h3a1 1 0 010 2H4a1 1 0 01-1-1z"/>
+            <path d="M3 15a1 1 0 011-1h3a1 1 0 010 2H4a1 1 0 01-1-1z"/>
+            <path d="M9 5h8M9 10h8M9 15h8"/>
+          </svg>
+          Categories
+        </a>
+
+        <!-- BUYER only -->
+        <a
+          class="sidebar-link"
+          th:href="@{/orders/my}"
+          th:classappend="${active == 'orders'} ? ' is-active'"
+          sec:authorize="hasRole('BUYER')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+            <path d="M8 6h4M8 10h4M8 14h2"/>
+          </svg>
+          My Orders
+        </a>
+
+        <!-- SELLER only -->
+        <a
+          class="sidebar-link"
+          th:href="@{/products/new}"
+          th:classappend="${active == 'new-product'} ? ' is-active'"
+          sec:authorize="hasRole('SELLER')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="10" cy="10" r="8"/>
+            <path d="M10 7v6M7 10h6"/>
+          </svg>
+          Add Product
+        </a>
+
+        <a
+          class="sidebar-link"
+          th:href="@{/orders/seller}"
+          th:classappend="${active == 'orders'} ? ' is-active'"
+          sec:authorize="hasRole('SELLER')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+            <path d="M8 6h4M8 10h4M8 14h2"/>
+          </svg>
+          Orders
+        </a>
+
+        <!-- ADMIN only -->
+        <a
+          class="sidebar-link"
+          th:href="@{/orders}"
+          th:classappend="${active == 'orders'} ? ' is-active'"
+          sec:authorize="hasRole('ADMIN')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+            <path d="M8 6h4M8 10h4M8 14h2"/>
+          </svg>
+          All Orders
+        </a>
+
+        <a
+          class="sidebar-link"
+          th:href="@{/admin/users}"
+          th:classappend="${active == 'users'} ? ' is-active'"
+          sec:authorize="hasRole('ADMIN')"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="10" cy="7" r="3"/>
+            <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6"/>
+          </svg>
+          Users
+        </a>
+
+      </nav>
+
+      <!-- User block at bottom -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user" sec:authorize="isAuthenticated()">
+          <div class="sidebar-avatar" sec:authentication="name">U</div>
+          <span class="sidebar-username" sec:authentication="name">username</span>
+        </div>
+        <form
+          sec:authorize="isAuthenticated()"
+          th:action="@{/auth/logout}"
+          method="post"
+          class="sidebar-logout-form"
+        >
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" class="sidebar-logout-btn" title="Logout">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 3h4a1 1 0 011 1v12a1 1 0 01-1 1h-4"/>
+              <path d="M8 14l4-4-4-4M12 10H3"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" data-sidebar-overlay></div>
+  </body>
+</html>
