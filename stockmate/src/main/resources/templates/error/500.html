@@ -3,36 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>403 | StockMate</title>
+    <title>500 | StockMate</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
   </head>
   <body>
     <div class="site-shell">
-      <div
-        th:replace="~{fragments/header :: siteHeader('Access Denied')}"
-      ></div>
+      <div th:replace="~{fragments/header :: siteHeader('Server Error')}"></div>
 
       <main class="page">
         <div class="container">
           <section class="card auth-card">
             <h2
               class="page-title"
-              th:text="${errorTitle != null ? errorTitle : 'Access Denied'}"
+              th:text="${errorTitle != null ? errorTitle : 'Internal Server Error'}"
             >
-              Access Denied
+              Internal Server Error
             </h2>
             <p
               class="page-subtitle"
-              th:text="${errorMessage != null ? errorMessage : 'You do not have permission to view this resource.'}"
+              th:text="${errorMessage != null ? errorMessage : 'Something went wrong on our end. Please try again later.'}"
             >
-              You do not have permission to view this resource.
+              Something went wrong on our end. Please try again later.
             </p>
 
             <div class="btn-row" style="margin-top: 16px">
               <a class="btn" th:href="@{/products}">Go to Catalogue</a>
-              <a class="btn btn-ghost" th:href="@{/dashboard}"
-                >Open Dashboard</a
-              >
             </div>
           </section>
         </div>

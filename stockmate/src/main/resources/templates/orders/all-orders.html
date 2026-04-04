@@ -3,15 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Seller Orders | StockMate</title>
+    <title>All Orders | StockMate</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <script defer th:src="@{/js/main.js}"></script>
   </head>
   <body>
     <div class="site-shell">
-      <div
-        th:replace="~{fragments/header :: siteHeader('Seller Orders')}"
-      ></div>
+      <div th:replace="~{fragments/header :: siteHeader('All Orders')}"></div>
 
       <main class="page">
         <div th:replace="~{fragments/header :: flashMessages}"></div>
@@ -20,9 +18,9 @@
           <section class="card">
             <div class="page-head">
               <div>
-                <h2 class="page-title">Incoming Orders</h2>
+                <h2 class="page-title">All Orders</h2>
                 <p class="page-subtitle">
-                  Manage status for orders placed on your products.
+                  System-wide order monitoring for administrators.
                 </p>
               </div>
             </div>
@@ -37,6 +35,7 @@
                     <th>ID</th>
                     <th>Product</th>
                     <th>Buyer</th>
+                    <th>Seller</th>
                     <th>Quantity</th>
                     <th>Total</th>
                     <th>Status</th>
@@ -55,6 +54,7 @@
                       >
                     </td>
                     <td th:text="${order.buyerUsername}">buyer</td>
+                    <td th:text="${order.sellerUsername}">seller</td>
                     <td th:text="${order.quantity}">1</td>
                     <td th:text="${order.totalPrice}">0.00</td>
                     <td>
@@ -86,6 +86,7 @@
                           <option value="CONFIRMED">CONFIRMED</option>
                           <option value="SHIPPED">SHIPPED</option>
                           <option value="DELIVERED">DELIVERED</option>
+                          <option value="CANCELLED">CANCELLED</option>
                         </select>
 
                         <button class="btn btn-secondary" type="submit">
@@ -106,7 +107,7 @@
               class="empty-state"
               th:if="${orders == null or #lists.isEmpty(orders)}"
             >
-              No orders have been placed on your products yet.
+              No orders available.
             </p>
           </section>
         </div>

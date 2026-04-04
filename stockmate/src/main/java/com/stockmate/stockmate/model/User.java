@@ -71,7 +71,7 @@ public class User {
 
     // ── Constructors ──────────────────────────────────────────
 
-    protected User() {
+    public User() {
         // JPA required
     }
 

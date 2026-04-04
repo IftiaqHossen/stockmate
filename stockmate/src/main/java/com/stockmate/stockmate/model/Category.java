@@ -42,7 +42,7 @@ public class Category {
 
     // ── Constructors ──────────────────────────────────────────
 
-    protected Category() {
+    public Category() {
         // JPA required
     }
 
