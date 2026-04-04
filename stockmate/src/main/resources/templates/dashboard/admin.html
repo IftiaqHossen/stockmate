@@ -7,7 +7,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Buyer Dashboard | StockMate</title>
+    <title>Admin Dashboard | StockMate</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <script defer th:src="@{/js/main.js}"></script>
   </head>
@@ -21,7 +21,7 @@
       <div class="app-main">
 
         <!-- Topbar -->
-        <div th:replace="~{fragments/header :: topbar('My Dashboard')}"></div>
+        <div th:replace="~{fragments/header :: topbar('Admin Dashboard')}"></div>
 
         <!-- Content -->
         <main class="app-content">
@@ -34,44 +34,45 @@
               <div class="stat-card-header">
                 <div class="stat-card-icon stat-card-icon--blue">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
-                    <path d="M8 6h4M8 10h4M8 14h2"/>
+                    <circle cx="10" cy="7" r="3"/>
+                    <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6"/>
                   </svg>
                 </div>
-                <span class="stat-card-trend">All time</span>
+                <span class="stat-card-trend stat-card-trend--up">Platform</span>
               </div>
-              <span class="stat-card-value" th:text="${totalOrders}">0</span>
-              <span class="stat-card-label">Total Orders</span>
-              <span class="stat-card-sub">All orders placed</span>
+              <span class="stat-card-value" th:text="${totalUsers}">0</span>
+              <span class="stat-card-label">Total Users</span>
+              <span class="stat-card-sub">Registered accounts</span>
             </div>
 
             <div class="stat-card">
               <div class="stat-card-header">
                 <div class="stat-card-icon stat-card-icon--green">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="10" cy="10" r="8"/>
-                    <path d="M10 6v4l3 3"/>
+                    <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+                    <path d="M8 6h4M8 10h4M8 14h2"/>
                   </svg>
                 </div>
-                <span class="stat-card-trend stat-card-trend--up">In progress</span>
+                <span class="stat-card-trend stat-card-trend--up">All time</span>
               </div>
-              <span class="stat-card-value" th:text="${activeOrders}">0</span>
-              <span class="stat-card-label">Active Orders</span>
-              <span class="stat-card-sub">Pending or confirmed</span>
+              <span class="stat-card-value" th:text="${totalOrders}">0</span>
+              <span class="stat-card-label">Total Orders</span>
+              <span class="stat-card-sub">Across all sellers</span>
             </div>
 
             <div class="stat-card">
               <div class="stat-card-header">
                 <div class="stat-card-icon stat-card-icon--purple">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 10l4 4 10-8"/>
+                    <rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/>
+                    <rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/>
                   </svg>
                 </div>
-                <span class="stat-card-trend stat-card-trend--up">Received</span>
+                <span class="stat-card-trend">Catalogue</span>
               </div>
               <span class="stat-card-value">—</span>
-              <span class="stat-card-label">Delivered</span>
-              <span class="stat-card-sub">Successfully fulfilled</span>
+              <span class="stat-card-label">Categories</span>
+              <span class="stat-card-sub">Active product groups</span>
             </div>
 
             <div class="stat-card">
@@ -82,23 +83,23 @@
                     <path d="M2 13l8 5 8-5M2 10l8 5 8-5"/>
                   </svg>
                 </div>
-                <span class="stat-card-trend">Discover</span>
+                <span class="stat-card-trend">Listings</span>
               </div>
               <span class="stat-card-value">—</span>
               <span class="stat-card-label">Products</span>
-              <span class="stat-card-sub">Available in catalogue</span>
+              <span class="stat-card-sub">In the catalogue</span>
             </div>
 
           </div>
 
-          <!-- Two-column layout -->
+          <!-- Two-column layout: recent orders + quick actions -->
           <div class="dashboard-grid">
 
             <!-- Recent Orders -->
             <section class="dash-section dash-section--wide">
               <div class="section-header">
                 <h2 class="section-title">Recent Orders</h2>
-                <a class="section-action" th:href="@{/orders/my}">View all &rarr;</a>
+                <a class="section-action" th:href="@{/orders}">View all &rarr;</a>
               </div>
 
               <div class="card">
@@ -111,8 +112,8 @@
                       <tr>
                         <th>#</th>
                         <th>Product</th>
+                        <th>Buyer</th>
                         <th>Seller</th>
-                        <th>Qty</th>
                         <th>Total</th>
                         <th>Status</th>
                         <th>Date</th>
@@ -121,14 +122,9 @@
                     <tbody>
                       <tr th:each="order : ${recentOrders}">
                         <td class="text-muted" th:text="${order.id}">1</td>
-                        <td>
-                          <a
-                            th:href="@{/products/{id}(id=${order.productId})}"
-                            th:text="${order.productName}"
-                          >Product</a>
-                        </td>
-                        <td class="text-muted" th:text="${order.sellerUsername}">seller</td>
-                        <td th:text="${order.quantity}">1</td>
+                        <td th:text="${order.productName}">Product</td>
+                        <td th:text="${order.buyerUsername}">buyer</td>
+                        <td th:text="${order.sellerUsername}">seller</td>
                         <td class="text-mono" th:text="'$' + ${order.totalPrice}">$0.00</td>
                         <td>
                           <span th:class="'badge ' +
@@ -152,7 +148,6 @@
                   th:if="${recentOrders == null or #lists.isEmpty(recentOrders)}"
                 >
                   No orders yet.
-                  <a th:href="@{/products}">Start shopping &rarr;</a>
                 </p>
               </div>
             </section>
@@ -164,34 +159,21 @@
               </div>
 
               <div class="quick-actions">
-                <a class="quick-action-card" th:href="@{/products}">
+                <a class="quick-action-card" th:href="@{/admin/users}">
                   <div class="quick-action-icon quick-action-icon--blue">
                     <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 2L2 7l8 5 8-5-8-5z"/>
-                      <path d="M2 13l8 5 8-5M2 10l8 5 8-5"/>
+                      <circle cx="10" cy="7" r="3"/>
+                      <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6"/>
                     </svg>
                   </div>
                   <div>
-                    <div class="quick-action-title">Browse Products</div>
-                    <div class="quick-action-sub">Explore the catalogue</div>
-                  </div>
-                </a>
-
-                <a class="quick-action-card" th:href="@{/orders/my}">
-                  <div class="quick-action-icon quick-action-icon--green">
-                    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
-                      <path d="M8 6h4M8 10h4M8 14h2"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="quick-action-title">All My Orders</div>
-                    <div class="quick-action-sub">Track &amp; manage orders</div>
+                    <div class="quick-action-title">Manage Users</div>
+                    <div class="quick-action-sub">View, edit, change roles</div>
                   </div>
                 </a>
 
                 <a class="quick-action-card" th:href="@{/categories}">
-                  <div class="quick-action-icon quick-action-icon--purple">
+                  <div class="quick-action-icon quick-action-icon--green">
                     <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M3 5a1 1 0 011-1h3a1 1 0 010 2H4a1 1 0 01-1-1z"/>
                       <path d="M3 10a1 1 0 011-1h3a1 1 0 010 2H4a1 1 0 01-1-1z"/>
@@ -200,8 +182,34 @@
                     </svg>
                   </div>
                   <div>
-                    <div class="quick-action-title">Browse Categories</div>
-                    <div class="quick-action-sub">Shop by category</div>
+                    <div class="quick-action-title">Categories</div>
+                    <div class="quick-action-sub">Add or remove groups</div>
+                  </div>
+                </a>
+
+                <a class="quick-action-card" th:href="@{/orders}">
+                  <div class="quick-action-icon quick-action-icon--purple">
+                    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 2h8a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+                      <path d="M8 6h4M8 10h4M8 14h2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="quick-action-title">All Orders</div>
+                    <div class="quick-action-sub">Full order history</div>
+                  </div>
+                </a>
+
+                <a class="quick-action-card" th:href="@{/products}">
+                  <div class="quick-action-icon quick-action-icon--orange">
+                    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10 2L2 7l8 5 8-5-8-5z"/>
+                      <path d="M2 13l8 5 8-5M2 10l8 5 8-5"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="quick-action-title">Product Catalogue</div>
+                    <div class="quick-action-sub">Browse all listings</div>
                   </div>
                 </a>
               </div>
