@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: stockmate-prod
+    runtime: docker
+    plan: free
+    branch: main
+    region: singapore
+    autoDeployTrigger: commit
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /auth/login
+    dockerCommand: |
+      /bin/sh -lc '
+        host_port_db="${DATABASE_URL#*@}"
+        host_port="${host_port_db%%/*}"
+        db_name="${host_port_db#*/}"
+        db_name="${db_name%%\?*}"
+        db_host="${host_port%%:*}"
+        db_port="${host_port##*:}"
+        export SPRING_DATASOURCE_URL="jdbc:postgresql://${db_host}:${db_port}/${db_name}"
+        exec java -jar app.jar
+      '
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: "8080"
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: stockmate-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: stockmate-db
+          property: password
+      - key: DATABASE_URL
+        fromDatabase:
+          name: stockmate-db
+          property: connectionString
+
+databases:
+  - name: stockmate-db
+    databaseName: stockmate_db
+    user: stockmate_user
+    plan: free
