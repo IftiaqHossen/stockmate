@@ -31,6 +31,19 @@ jobs:
         run: chmod +x mvnw; ./mvnw --batch-mode --no-transfer-progress test
 
       - name: Trigger Render production deploy hook
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
         run: |
-          curl --silent --show-error --fail \
-            "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          RENDER_DEPLOY_HOOK="$(echo "$RENDER_DEPLOY_HOOK" | tr -d '\r\n')"
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "RENDER_DEPLOY_HOOK is empty or not set."
+            exit 1
+          fi
+          case "$RENDER_DEPLOY_HOOK" in
+            http://*|https://*) ;;
+            *)
+              echo "RENDER_DEPLOY_HOOK is not a valid URL."
+              exit 1
+              ;;
+          esac
+          curl --silent --show-error --fail "$RENDER_DEPLOY_HOOK"
