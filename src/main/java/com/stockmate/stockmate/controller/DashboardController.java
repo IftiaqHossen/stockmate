@@ -1,5 +1,7 @@
 package com.stockmate.stockmate.controller;
 
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -71,13 +73,31 @@ public class DashboardController {
         List<OrderResponse> sellerOrders
                 = orderService.getOrdersBySeller(currentUser.getUsername());
 
+        List<ProductResponse> recentProducts = sellerProducts.stream()
+                .sorted(Comparator.comparing(
+                        ProductResponse::createdAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .limit(5)
+                .toList();
+
         long pendingOrders = sellerOrders.stream()
                 .filter(o -> "PENDING".equals(o.status()))
                 .count();
 
+        long fulfilledOrders = sellerOrders.stream()
+                .filter(o -> "DELIVERED".equals(o.status()))
+                .count();
+
+        BigDecimal totalRevenue = sellerOrders.stream()
+                .filter(o -> "DELIVERED".equals(o.status()))
+                .map(OrderResponse::totalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         model.addAttribute("totalProducts", sellerProducts.size());
         model.addAttribute("pendingOrders", pendingOrders);
-        model.addAttribute("products", sellerProducts.stream().limit(5).toList());
+        model.addAttribute("fulfilledOrders", fulfilledOrders);
+        model.addAttribute("totalRevenue", totalRevenue);
+        model.addAttribute("products", recentProducts);
         model.addAttribute("recentOrders", sellerOrders.stream().limit(5).toList());
         return "dashboard/seller";   // → templates/dashboard/seller.html
     }
