@@ -69,7 +69,7 @@
                 </div>
                 <span class="stat-card-trend stat-card-trend--up">Orders</span>
               </div>
-              <span class="stat-card-value">—</span>
+              <span class="stat-card-value" th:text="${fulfilledOrders}">0</span>
               <span class="stat-card-label">Fulfilled</span>
               <span class="stat-card-sub">Delivered orders</span>
             </div>
@@ -84,7 +84,7 @@
                 </div>
                 <span class="stat-card-trend">Earnings</span>
               </div>
-              <span class="stat-card-value">—</span>
+              <span class="stat-card-value" th:text="'$' + ${totalRevenue}">$0.00</span>
               <span class="stat-card-label">Revenue</span>
               <span class="stat-card-sub">Total from sales</span>
             </div>
