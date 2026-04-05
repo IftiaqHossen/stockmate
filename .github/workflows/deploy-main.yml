@@ -22,7 +22,6 @@ jobs:
           cache: maven
 
       - name: Run tests (final gate before production deploy)
-        working-directory: stockmate
         env:
           SPRING_PROFILES_ACTIVE: test
           SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE

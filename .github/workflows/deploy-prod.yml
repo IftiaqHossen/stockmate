@@ -1,18 +1,15 @@
-name: Deploy to UAT
+name: Deploy to PROD
 
 on:
   push:
     branches:
-      - UAT
+      - PROD
 
 jobs:
-  deploy-uat:
-    name: Trigger Render UAT Deploy
+  deploy-prod:
+    name: Trigger Render PROD Deploy
     runs-on: ubuntu-latest
-    needs: []
 
-    # Only deploy after build-and-test passes on the same commit.
-    # We re-run the test job here as a required gate before deploying.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,7 +22,6 @@ jobs:
           cache: maven
 
       - name: Run tests (gate before deploy)
-        working-directory: stockmate
         env:
           SPRING_PROFILES_ACTIVE: test
           SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -34,7 +30,7 @@ jobs:
           SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
         run: ./mvnw --batch-mode --no-transfer-progress test
 
-      - name: Trigger Render UAT deploy hook
+      - name: Trigger Render PROD deploy hook
         run: |
           curl --silent --show-error --fail \
-            "${{ secrets.RENDER_DEPLOY_HOOK_UAT }}"
+            "${{ secrets.RENDER_DEPLOY_HOOK_PROD }}"
