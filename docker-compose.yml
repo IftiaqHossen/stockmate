@@ -12,8 +12,8 @@ services:
     container_name: stockmate_db
     environment:
       POSTGRES_DB:       stockmate_db
-      POSTGRES_USER:     ${SPRING_DATASOURCE_USERNAME}
-      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      POSTGRES_USER:     ${SPRING_DATASOURCE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       # Optional: run schema on first boot (comment out after first run)
@@ -21,7 +21,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${SPRING_DATASOURCE_USERNAME} -d stockmate_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${SPRING_DATASOURCE_USERNAME:-postgres} -d stockmate_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,8 +39,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE:    prod
       SPRING_DATASOURCE_URL:     jdbc:postgresql://db:5432/stockmate_db
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-postgres}
     ports:
       - "8080:8080"
     restart: unless-stopped
