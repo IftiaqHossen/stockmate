@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -57,25 +56,12 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService,
+                          PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
-    }
-
-    // ══════════════════════════════════════════════════════════════════
-    //  BEAN 1 ─ PasswordEncoder
-    //
-    //  BCryptPasswordEncoder with strength=12 (2^12 = 4096 work rounds).
-    //  Default strength is 10; 12 gives better brute-force resistance
-    //  without making login noticeably slow (~300 ms on modern hardware).
-    //
-    //  WHERE IT IS USED
-    //    UserServiceImpl.register()  → passwordEncoder.encode(plaintext)
-    //    DaoAuthenticationProvider  → passwordEncoder.matches(plain, hash)
-    // ══════════════════════════════════════════════════════════════════
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        this.passwordEncoder = passwordEncoder;
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -92,7 +78,7 @@ public class SecurityConfig {
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
