@@ -31,7 +31,7 @@ jobs:
           SPRING_DATASOURCE_USERNAME: sa
           SPRING_DATASOURCE_PASSWORD: ""
           SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
-        run: ./mvnw --batch-mode --no-transfer-progress test
+        run: chmod +x mvnw; ./mvnw --batch-mode --no-transfer-progress test
 
       - name: Trigger Render UAT deploy hook
         run: |
